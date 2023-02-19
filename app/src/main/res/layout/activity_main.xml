@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Your other UI elements here -->
+
+        <GridLayout
+            android:id="@+id/number_pad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:rowCount="4"
+            android:columnCount="3"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false">
+
+            <Button
+                android:text="1"
+                android:layout_row="0"
+                android:layout_column="0" />
+
+            <Button
+                android:text="2"
+                android:layout_row="0"
+                android:layout_column="1" />
+
+            <Button
+                android:text="3"
+                android:layout_row="0"
+                android:layout_column="2" />
+
+            <Button
+                android:text="4"
+                android:layout_row="1"
+                android:layout_column="0" />
+
+            <Button
+                android:text="5"
+                android:layout_row="1"
+                android:layout_column="1" />
+
+            <Button
+                android:text="6"
+                android:layout_row="1"
+                android:layout_column="2" />
+
+            <Button
+                android:text="7"
+                android:layout_row="2"
+                android:layout_column="0" />
+
+            <Button
+                android:text="8"
+                android:layout_row="2"
+                android:layout_column="1" />
+
+            <Button
+                android:text="9"
+                android:layout_row="2"
+                android:layout_column="2" />
+
+            <Button
+                android:text="0"
+                android:layout_row="3"
+                android:layout_column="1" />
+
+        </GridLayout>
+
+        <Button
+            android:text="Enter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/number_pad"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_column="3"
+            android:layout_row="0"
+            android:layout_rowSpan="4" />
+
+    </RelativeLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
