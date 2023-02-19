@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/GIT/2023app/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/GIT/2023app/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2485" />
+        <entry key="..\:/GIT/2023app/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2485" />
+        <entry key="..\:/GIT/2023app/app/src/main/res/drawable/view_border.xml" value="0.2485" />
+        <entry key="..\:/GIT/2023app/app/src/main/res/drawable/view_border2.xml" value="0.2485" />
+        <entry key="..\:/GIT/2023app/app/src/main/res/layout/activity_main.xml" value="0.4" />
       </map>
     </option>
   </component>
