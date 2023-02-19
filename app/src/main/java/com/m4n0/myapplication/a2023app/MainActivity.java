@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 // ^^ boilerplate
 
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.EditText;
@@ -91,11 +92,15 @@ public class MainActivity extends AppCompatActivity {
                 if (currentAnswer.length() > 0) {
                     int currentAnswerInt = Integer.parseInt(currentAnswer);
                     if (currentAnswerInt == goodAnswer) {
-                        Toast.makeText(MainActivity.this, "Correct!", Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(MainActivity.this, "Correct!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.TOP, 0, 100);
+                        toast.show();
                         goodAnswer = presentequasion();
                         answerWindow.setText("");
                     } else {
-                        Toast.makeText(MainActivity.this, "Incorrect!", Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(MainActivity.this, "Incorrect!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.TOP, 0, 100);
+                        toast.show();
                         answerWindow.setText("");
                     }
                 }
