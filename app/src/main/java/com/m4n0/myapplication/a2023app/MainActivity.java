@@ -64,7 +64,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         String currentAnswer = answerWindow.getText().toString();
-                        answerWindow.setText(currentAnswer + number);
+                        if (currentAnswer.length() < 6){
+                            answerWindow.setText(currentAnswer + number);
+                            }else{
+                                answerWindow.setText(currentAnswer);
+                            }
+                        
                     }
                 });
             }
