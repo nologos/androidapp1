@@ -19,3 +19,4 @@ app/build
 .gradle
 gradle
 app/release
+registrationdata
