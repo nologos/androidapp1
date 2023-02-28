@@ -14,9 +14,8 @@
 .cxx
 local.properties
 scratch
-gradle
 app/build
 .gradle
-gradle
 app/release
 registrationdata
+tools
