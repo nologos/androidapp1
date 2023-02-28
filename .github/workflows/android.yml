@@ -35,9 +35,6 @@ jobs:
       - name: Verify APK signature
         run: jarsigner -verify app/build/outputs/apk/release/app-release-unsigned.apk
 
-      - name: Zipalign APK
-        run: zipalign -v 4 app/build/outputs/apk/release/app-release-unsigned.apk app-release.apk
-
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
