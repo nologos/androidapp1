@@ -33,10 +33,10 @@ jobs:
           jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore my.keystore -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEYSTORE_PASSWORD }} app/build/outputs/apk/release/app-release-unsigned.apk ${{ secrets.KEY_ALIAS }}
 
       - name: Verify APK signature
-        run: jarsigner -verify app/build/outputs/apk/release/app-release-unsigned.apk
+        run: jarsigner -verify app/build/outputs/apk/release/app-release-unsigned.apk && mv app/build/outputs/apk/release/app-release-unsigned.apk app-release.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: app-release
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          path: app-release.apk
