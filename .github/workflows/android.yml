@@ -29,8 +29,7 @@ jobs:
         run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > my.keystore
 
       - name: Sign APK
-        run: |
-          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore my.keystore -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEYSTORE_PASSWORD }} app/build/outputs/apk/release/app-release-unsigned.apk ${{ secrets.KEY_ALIAS }}
+        run: jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore my.keystore -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEYSTORE_PASSWORD }} app/build/outputs/apk/release/app-release-unsigned.apk ${{ secrets.KEY_ALIAS }}
 
       - name: Verify APK signature
         run: jarsigner -verify app/build/outputs/apk/release/app-release-unsigned.apk && mv app/build/outputs/apk/release/app-release-unsigned.apk app-release.apk
@@ -40,3 +39,12 @@ jobs:
         with:
           name: app-release
           path: app-release.apk
+
+      - name: Deploy to Amazon appstore
+        run: |
+          if [ "$(cat app/build.gradle | grep versionName | awk '{print $2}' | tr -d \"\")" != "${{ env.GRADLE_VERSION }}" ]; then
+            python $GITHUB_WORKSPACE/amazonbuild/amazonCD.py --client_id ${{ secrets.AMZN_CLIENT_ID }} --client_secret ${{ secrets.AMZN_CLIENT_SECRET }} --app_id ${{ secrets.AMZN_APP_ID }} --local_apk_path app-release.apk --verbose
+            echo "::set-env name=GRADLE_VERSION::$(cat app/build.gradle | grep versionName | awk '{print $2}' | tr -d \"\")"
+          fi
+        env:
+          GRADLE_VERSION: ${{ env.GRADLE_VERSION }}

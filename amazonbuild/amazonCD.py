@@ -2,18 +2,16 @@
 import argparse
 import requests
 import sys
-from pprint import pprint
 import logging as log
 
 parser = argparse.ArgumentParser(description='Deploy app to Amazon Appstore')
 parser.add_argument('--run', required=False, action='store_true', help='Run the script')
-parser.add_argument('--stop', required=False, action='store_true', help='Run the script')
 # to be mandatory script arguments
-parser.add_argument('--client_id', required=False, help='client_id - you get this from amazon portal, apps&services ribbon, API access, Security profiles, Web Settings, looks like amzn1.application-oa2-client.XXX...')
-parser.add_argument('--client_secret', required=False, help='client_secret - you get this from amazon portal, apps&services ribbon, API access, Security profiles, Web Settings, this is a 64 char string')
-parser.add_argument('--app_id', required=False, help='client_secret - you get this from amazon portal, apps&services ribbon, My app, App, App Submission API Keys, amzn1.devportal.mobileapp.XXX...')
-parser.add_argument('--local_apk_path', required=False, help='apk path on local computer. Example: d:/myapp.apk')
-parser.add_argument('--verbose', required=False, action='store_true', help='verbose output')
+parser.add_argument('--client_id', required=True, help='client_id - you get this from amazon portal, apps&services ribbon, API access, Security profiles, Web Settings, looks like amzn1.application-oa2-client.XXX...')
+parser.add_argument('--client_secret', required=True, help='client_secret - you get this from amazon portal, apps&services ribbon, API access, Security profiles, Web Settings, this is a 64 char string')
+parser.add_argument('--app_id', required=True, help='app_id - you get this from amazon portal, apps&services ribbon, My app, App, App Submission API Keys, amzn1.devportal.mobileapp.XXX...')
+parser.add_argument('--local_apk_path', required=True, help='apk path on local computer. Example: d:/myapp.apk')
+parser.add_argument('--verbose', required=True, action='store_true', help='verbose output')
 
 
 args = parser.parse_args()
@@ -21,6 +19,8 @@ arg_client_id = args.client_id
 arg_client_secret = args.client_secret
 arg_app_id = args.app_id
 arg_local_apk_path = args.local_apk_path
+arg_recent_changes = "test"
+
 if args.verbose:
     log.basicConfig(level=log.INFO)
 else:
@@ -28,9 +28,10 @@ else:
 
 if args.run:
     log.info("Running script")
+    
 else:
     log.info("use --run to run script, displaying current arguments")
-    pprint(vars(args))
+    print(vars(args))
     sys.exit(0)
 
 #@@@@@@@@@@ Obtain Access Token
@@ -126,7 +127,7 @@ replace_apk_response = requests.put(replace_apk_url, headers=all_headers, data=l
 
 log.info(replace_apk_response.json())
 #@@@@@@@@@@@@@ update listing
-arg_recent_changes = "test"
+
 # getlisting
 get_listing_path = '/v1/applications/%s/edits/%s/listings' % (app_id, edit_id)
 get_listing_url = BASE_URL + get_listing_path + "/en-US"
@@ -148,6 +149,16 @@ log.info(set_listing_response.json())
 
 #@@@@@@@@@@@@@ commit
 # query the current edit and etags before commit
+
+log.info("getting open edit")
+get_edits_path = '/v1/applications/%s/edits' % app_id
+get_edits_url = BASE_URL + get_edits_path
+get_edits_response = requests.get(get_edits_url, headers=headers)
+current_edit = get_edits_response.json()
+edit_id = current_edit['id']
+etag = get_edits_response.headers.get('ETag')
+log.info("edit_id: %s" % edit_id)
+log.info("etag: %s" % etag)
 
 query = get_edits_url + "/%s" % edit_id + "/commit" 
 all_headers = {"if-match": etag}
