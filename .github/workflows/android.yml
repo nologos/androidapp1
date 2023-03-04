@@ -18,12 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: getprieviouscommit
-        run: echo ${{github.head_ref}}
+        run: echo ${{github.sha}}
         # with:
-        #   ref: ${{ github.head_ref }}
+        #   ref: ${{ github.sha }}
       - name: getprieviouscommit with ref
-        ref: ${{ github.head_ref }}
-        run: echo ${{github.head_ref}}
+        ref: ${{ github.sha }}
+        run: echo ${{github.sha}} && git rev-parse ${SHA}^
 
       - uses: actions/checkout@v3
       - name: Set up JDK 11
