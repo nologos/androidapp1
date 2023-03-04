@@ -22,7 +22,6 @@ jobs:
         # with:
         #   ref: ${{ github.sha }}
       - name: getprieviouscommit with ref
-        ref: ${{ github.sha }}
         run: echo ${{github.sha}} && git rev-parse ${SHA}^
 
       - uses: actions/checkout@v3
