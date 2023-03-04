@@ -44,7 +44,7 @@ jobs:
       #     path: app-release.apk
 
       - name: python version compare
-      run: git log --oneline --graph --decorate --all
+        run: git log --oneline --graph --decorate --all
         # run: python $GITHUB_WORKSPACE/amazonbuild/compareBuildVersion.py && PYTHON_VER=$? && echo $PYTHON_VER >> $GITHUB_PYTHON_ver
 
       - name: test python ver is 0
