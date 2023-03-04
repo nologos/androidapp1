@@ -8,7 +8,7 @@ on:
 
 env:
   APP_VERSION_NAME: ${{ vars.APP_VERSION_NAME }}
-  CURRENT_COMMIT_APP_VERSION_NAME: $(cat app/build.gradle | grep versionName | awk '{print $2}' | tr -d \"\")
+  CURRENT_COMMIT_APP_VERSION_NAME: $(cat app/build.gradle | grep versionCode | awk '{print $2}' | tr -d \"\")
 
 jobs:
   build:
@@ -46,10 +46,10 @@ jobs:
       - name: INFO - version names
         run: |
          echo "APP_VERSION_NAME - $APP_VERSION_NAME"
-         echo "CURRENT_COMMIT_APP_VERSION_NAME - $(cat app/build.gradle | grep versionName | awk '{print $2}' | tr -d \"\")"
+         echo "CURRENT_COMMIT_APP_VERSION_NAME - $(cat app/build.gradle | grep versionCode | awk '{print $2}' | tr -d \"\")"
          echo ${{ env.APP_VERSION_NAME }}
          echo ${{ env.CURRENT_COMMIT_APP_VERSION_NAME }}
-         APPVAR=$(cat app/build.gradle | grep versionName | awk '{print $2}' | tr -d \"\") && echo $APPVAR >> $GITHUB_ENV
+         APPVAR=$(cat app/build.gradle | grep versionCode | awk '{print $2}' | tr -d \"\") && echo $APPVAR >> $GITHUB_ENV
          echo "$APPVAR"
       - name: Deploy to Amazon appstore
         if: ${{ env.APP_VERSION_NAME == env.APPVAR }}
