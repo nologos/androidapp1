@@ -9,7 +9,6 @@ on:
 env:
   APP_VERSION_NAME: ${{ vars.APP_VERSION_NAME }}
   CURRENT_COMMIT_APP_VERSION_NAME: $(cat app/build.gradle | grep versionName | awk '{print $2}' | tr -d \"\")
-  PREVIOUS_COMMIT_APP_VERSION_NAME: $(git show HEAD:app/build.gradle | grep versionName | awk '{print $2}' | tr -d \")
 
 jobs:
   build:
@@ -25,47 +24,30 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      # - name: Build with Gradle
-      #   run: ./gradlew build
 
-      # - name: Decode keystore file from base64
-      #   run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > my.keystore
+      - name: Build with Gradle
+        run: ./gradlew build
 
-      # - name: Sign APK
-      #   run: jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore my.keystore -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEYSTORE_PASSWORD }} app/build/outputs/apk/release/app-release-unsigned.apk ${{ secrets.KEY_ALIAS }}
+      - name: Decode keystore file from base64
+        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > my.keystore
 
-      # - name: Verify APK signature
-      #   run: jarsigner -verify app/build/outputs/apk/release/app-release-unsigned.apk && mv app/build/outputs/apk/release/app-release-unsigned.apk app-release.apk
+      - name: Sign APK
+        run: jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore my.keystore -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEYSTORE_PASSWORD }} app/build/outputs/apk/release/app-release-unsigned.apk ${{ secrets.KEY_ALIAS }}
 
-      # - name: Upload APK
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: app-release
-      #     path: app-release.apk
+      - name: Verify APK signature
+        run: jarsigner -verify app/build/outputs/apk/release/app-release-unsigned.apk && mv app/build/outputs/apk/release/app-release-unsigned.apk app-release.apk
 
-      - name: python version compare
-        run: git log --oneline --graph --decorate --all
-        # run: python $GITHUB_WORKSPACE/amazonbuild/compareBuildVersion.py && PYTHON_VER=$? && echo $PYTHON_VER >> $GITHUB_PYTHON_ver
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release
+          path: app-release.apk
+          
+      - name: INFO - version names
+        run: |
+         echo "APP_VERSION_NAME - $APP_VERSION_NAME"
+         echo "CURRENT_COMMIT_APP_VERSION_NAME - $CURRENT_COMMIT_APP_VERSION_NAME"
 
-      - name: test python ver is 0
-        run: echo $PYTHON_VER
-
-      - name: test vars
-        run: echo ${{ vars.APP_VERSION_NAME }}
-      - name: test compares tring
-        run: echo $(cat app/build.gradle | grep versionName | awk '{print $2}' | tr -d \"\")
-      - name: test assigned var
-        run: echo $APP_VERSION_NAME
-      - name: test assigned var1 non
-        run: echo $(git show HEAD^:app/build.gradle | grep versionName | awk '{print $2}' | tr -d \")
-      - name: test assigned var2 aaa
-        run: aaa=$(git show HEAD~1:app/build.gradle | grep versionName | awk '{print $2}' | tr -d \") && echo $aaa
-      - name: test assigned var
-        run: echo $PREVIOUS_COMMIT_APP_VERSION_NAME
-      - name: test if
+      - name: Deploy to Amazon appstore
         if: ${{ env.APP_VERSION_NAME == env.CURRENT_COMMIT_APP_VERSION_NAME }}
-        run: echo "test if"
-
-      # - name: Deploy to Amazon appstore
-      #   if: ${{ env.APP_VERSION_NAME == env.CURRENT_COMMIT_APP_VERSION_NAME }}
-      #   run: python $GITHUB_WORKSPACE/amazonbuild/amazonCD.py --client_id ${{ secrets.AMZN_CLIENT_ID }} --client_secret ${{ secrets.AMZN_CLIENT_SECRET }} --app_id ${{ secrets.AMZN_APP_ID }} --local_apk_path app-release.apk --verbose
+        run: python $GITHUB_WORKSPACE/amazonbuild/amazonCD.py --client_id ${{ secrets.AMZN_CLIENT_ID }} --client_secret ${{ secrets.AMZN_CLIENT_SECRET }} --app_id ${{ secrets.AMZN_APP_ID }} --local_apk_path app-release.apk --verbose
