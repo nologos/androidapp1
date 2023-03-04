@@ -16,7 +16,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.sha }}
       - name: getprieviouscommit
         run: echo ${{github.sha}}
         # with:
