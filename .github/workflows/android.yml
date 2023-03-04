@@ -22,7 +22,7 @@ jobs:
         # with:
         #   ref: ${{ github.sha }}
       - name: getprieviouscommit with ref
-        run: echo ${{github.sha}} && git rev-parse ${SHA}^
+        run: echo ${{github.sha}} && git rev-parse ${{github.sha}}^
 
       - uses: actions/checkout@v3
       - name: Set up JDK 11
