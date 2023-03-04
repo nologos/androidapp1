@@ -49,7 +49,8 @@ jobs:
          echo "CURRENT_COMMIT_APP_VERSION_NAME - $(cat app/build.gradle | grep versionName | awk '{print $2}' | tr -d \"\")"
          echo ${{ env.APP_VERSION_NAME }}
          echo ${{ env.CURRENT_COMMIT_APP_VERSION_NAME }}
-
+         APPVAR=$(cat app/build.gradle | grep versionName | awk '{print $2}' | tr -d \"\") && echo $APPVAR >> $GITHUB_APPVAR
+         echo "$APPVAR"
       - name: Deploy to Amazon appstore
-        if: ${{ env.APP_VERSION_NAME == env.CURRENT_COMMIT_APP_VERSION_NAME }}
+        if: ${{ env.APP_VERSION_NAME == env.APPVAR }}
         run: python $GITHUB_WORKSPACE/amazonbuild/amazonCD.py --client_id ${{ secrets.AMZN_CLIENT_ID }} --client_secret ${{ secrets.AMZN_CLIENT_SECRET }} --app_id ${{ secrets.AMZN_APP_ID }} --local_apk_path app-release.apk --verbose --run
