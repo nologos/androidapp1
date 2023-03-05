@@ -11,6 +11,7 @@ parser.add_argument('--client_id', required=True, help='client_id - you get this
 parser.add_argument('--client_secret', required=True, help='client_secret - you get this from amazon portal, apps&services ribbon, API access, Security profiles, Web Settings, this is a 64 char string')
 parser.add_argument('--app_id', required=True, help='app_id - you get this from amazon portal, apps&services ribbon, My app, App, App Submission API Keys, amzn1.devportal.mobileapp.XXX...')
 parser.add_argument('--local_apk_path', required=True, help='apk path on local computer. Example: d:/myapp.apk')
+parser.add_argument('--recent_changes', required=False, help='recent_changes. Example: "fixed bug xyz"')
 parser.add_argument('--verbose', required=True, action='store_true', help='verbose output')
 
 
@@ -19,7 +20,7 @@ arg_client_id = args.client_id
 arg_client_secret = args.client_secret
 arg_app_id = args.app_id
 arg_local_apk_path = args.local_apk_path
-arg_recent_changes = "test"
+arg_recent_changes = args.recent_changes
 
 if args.verbose:
     log.basicConfig(level=log.INFO)
