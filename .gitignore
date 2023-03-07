@@ -19,3 +19,6 @@ app/build
 app/release
 registrationdata
 tools
+# all folders and its contents in this project named .idea
+**/.idea/*
+
