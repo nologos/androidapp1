@@ -4,166 +4,197 @@ import requests
 import sys
 import logging as log
 
-parser = argparse.ArgumentParser(description='Deploy app to Amazon Appstore')
-parser.add_argument('--run', required=False, action='store_true', help='Run the script')
-# to be mandatory script arguments
-parser.add_argument('--client_id', required=True, help='client_id - you get this from amazon portal, apps&services ribbon, API access, Security profiles, Web Settings, looks like amzn1.application-oa2-client.XXX...')
-parser.add_argument('--client_secret', required=True, help='client_secret - you get this from amazon portal, apps&services ribbon, API access, Security profiles, Web Settings, this is a 64 char string')
-parser.add_argument('--app_id', required=True, help='app_id - you get this from amazon portal, apps&services ribbon, My app, App, App Submission API Keys, amzn1.devportal.mobileapp.XXX...')
-parser.add_argument('--local_apk_path', required=True, help='apk path on local computer. Example: d:/myapp.apk')
-parser.add_argument('--recent_changes', required=False, help='recent_changes. Example: "fixed bug xyz"')
-parser.add_argument('--verbose', required=True, action='store_true', help='verbose output')
 
 
-args = parser.parse_args()
-arg_client_id = args.client_id
-arg_client_secret = args.client_secret
-arg_app_id = args.app_id
-arg_local_apk_path = args.local_apk_path
-arg_recent_changes = args.recent_changes
+def authenticate(client_id, client_secret):
+    log.info("obtaining access token")
+    scope = "appstore::apps:readwrite"
+    grant_type = "client_credentials"
+    data = {
+        "grant_type": grant_type,
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "scope": scope
+    }
+    amazon_auth_url = "https://api.amazon.com/auth/o2/token"
+    auth_response = requests.post(amazon_auth_url, data=data)
+    try:
+        # Read token from auth response
+        auth_response_json = auth_response.json()
+        auth_token = auth_response_json["access_token"]
 
-if args.verbose:
-    log.basicConfig(level=log.INFO)
-else:
-    log.basicConfig(level=log.WARNING)
+        auth_token_header_value = "Bearer %s" % auth_token
 
-if args.run:
-    log.info("Running script")
+        headers = {
+            "Authorization": auth_token_header_value,
+        }
+        return headers
+    except:
+        log.error("Error obtaining access token??")
+        log.error(auth_response.json())
+        return 0
+
+def editFull():
+    edits_url = BASE_URL + '/v1/applications/%s/edits' % app_id
+    try:
+        log.info("getting edit info")
+        create_edit_response = requests.get(edits_url, headers=headers)
+        edit_id = create_edit_response.json()['id']
+    except:
+        log.info("no edit found, creating new edit")
+        create_edit_response = requests.post(edits_url, headers=headers)
+        edit_id = create_edit_response.json()['id']
+    etag = create_edit_response.headers.get('ETag')
+    log.info("edit info: " +  edit_id +" "+ etag)
+    return edit_id, etag
+
+def APKreplace(app_id, local_apk_path):
+    '''
+    gets the curent edit
+    gets the curent apk
+    gets the curent apk etag
+    gets local apk file
+    uploads local apk file
+    '''
+    edit_id, etag = editFull()
+    log.info("replacing apk")
+    ## Get replace APK URL
+    get_all_apks_URL = BASE_URL + '/v1/applications/%s/edits/%s/apks' % (app_id, edit_id)
+    all_apks_response = requests.get(get_all_apks_URL, headers=headers)
+    apk_id = all_apks_response.json()[0]['id']
+
+    APK_id_url = get_all_apks_URL + '/%s' % apk_id
+    APK_id_response = requests.get(APK_id_url, headers=headers)
+    # get the etag
+    apk_etag = APK_id_response.headers.get('ETag')
+    # get the replace url
+    replace_apk_url = APK_id_url + '/replace'
+
+    ## Open the apk file on your local machine
+    try:
+        log.info("Reading local apk file")
+        local_apk = open(local_apk_path, 'rb').read()
+    except:
+        log.error("Error opening local apk file")
+        sys.exit(1)
     
-else:
-    log.info("use --run to run script, displaying current arguments")
-    print(vars(args))
-    sys.exit(0)
+    all_headers = {
+        'Content-Type': 'application/vnd.android.package-archive',
+        'If-Match': apk_etag
+    }
+    all_headers.update(headers)
+    replace_apk_response = requests.put(replace_apk_url, headers=all_headers, data=local_apk)
+    log.info(replace_apk_response.json())
 
-#@@@@@@@@@@ Obtain Access Token
-#  Values that you need to provide
-log.info("assigning variables")
-BASE_URL = 'https://developer.amazon.com/api/appstore'
-client_id = arg_client_id
-client_secret = arg_client_secret
-app_id = arg_app_id
-local_apk_path = arg_local_apk_path
+def getListing():
+    edit_id, etag = editFull()
+    get_listing_url = BASE_URL + '/v1/applications/%s/edits/%s/listings/en-US' % (app_id, edit_id)
+    get_listing_response = requests.get(get_listing_url, headers=headers)
+    log.info(get_listing_response)
+    return get_listing_response.json()
 
-log.info("obtaining access token")
-scope = "appstore::apps:readwrite"
-grant_type = "client_credentials"
-data = {
-    "grant_type": grant_type,
-    "client_id": client_id,
-    "client_secret": client_secret,
-    "scope": scope
-}
-amazon_auth_url = "https://api.amazon.com/auth/o2/token"
-auth_response = requests.post(amazon_auth_url, data=data)
+def setListingRecentChanges(recent_changes):
+    edit_id, etag = editFull()
+    listing = getListing()
+    listing['recentChanges'] = recent_changes
+    set_listing_url = BASE_URL + '/v1/applications/%s/edits/%s/listings/en-US' % (app_id, edit_id)
+    all_headers = {
+        'If-Match': etag
+    }
+    all_headers.update(headers)
+    set_listing_response = requests.put(set_listing_url, headers=all_headers, json=listing)
+    log.info(set_listing_response)
+    log.info(set_listing_response.json())
 
-# Read token from auth response
-auth_response_json = auth_response.json()
-auth_token = auth_response_json["access_token"]
+def submitCommit():
+    edit_id, etag = editFull()
+    log.info("getting open edit")
+    commit_url = BASE_URL + '/v1/applications/%s/edits/%s/commit' % (app_id, edit_id)
+    all_headers = {"if-match": etag}
+    all_headers.update(headers)
+    commit_response = requests.post(commit_url, headers=all_headers)
+    log.info(commit_response.json())
 
-auth_token_header_value = "Bearer %s" % auth_token
-
-headers = {
-    "Authorization": auth_token_header_value,
-}
-
-if auth_response.status_code != 200:
-    log.error("Error obtaining access token??")
-    log.error(auth_response.json())
-
-#@@@@@@@@@@ Create a New Edit
-log.info("creating new edit")
-# try/except 
-try:
+def getAPKversion():
+    '''
+    Get the current APK version
+    Compare to the the local build.gradle versioncode to see if update required
+    '''
     create_edit_path = '/v1/applications/%s/edits' % app_id
     create_edit_url = BASE_URL + create_edit_path
-    create_edit_response = requests.post(create_edit_url, headers=headers)
-    edit_id = create_edit_response.json()['id']
-except:
-    log.error("Error creating new edit")
-    log.error(create_edit_response.json())
-    log.error("breaking error, or edit already exists")
+    try:
+        create_edit_response = requests.get(create_edit_url, headers=headers)
+        edit_id = create_edit_response.json()['id']
+    except:
+        create_edit_response = requests.post(create_edit_url, headers=headers)
+        edit_id = create_edit_response.json()['id']
+    
+    # Get the Open Edit
+    get_apks_path = '/v1/applications/%s/edits/%s/apks' % (app_id, edit_id)
+    get_apks_url = BASE_URL + get_apks_path
+    apks = requests.get(get_apks_url, headers=headers)
+    firstAPK = apks.json()[0]
+    VersionCode = firstAPK['versionCode']
+    return VersionCode
 
-#@@@@@@@@@@ Get the Open Edit
-log.info("getting open edit")
-get_edits_path = '/v1/applications/%s/edits' % app_id
-get_edits_url = BASE_URL + get_edits_path
-get_edits_response = requests.get(get_edits_url, headers=headers)
-current_edit = get_edits_response.json()
-edit_id = current_edit['id']
-etag = get_edits_response.headers.get('ETag')
-log.info("edit_id: %s" % edit_id)
-log.info("etag: %s" % etag)
+def getLocalVersion():
+    # open the file for reading
+    with open('app/build.gradle', 'r') as file:
+        # loop through each line of the file
+        for line in file:
+            # check if the line contains "versionCode"
+            if "versionCode" in line:
+                # extract the version code from the line
+                versionCode = line.split()[-1].strip('"\n')
+                return int(versionCode)
 
-#@@@@@@@@@@ REPLACE APK
-log.info("replacing apk")
-## Get the current list of APKs
-get_apks_path = '/v1/applications/%s/edits/%s/apks' % (app_id, edit_id)
-get_apks_url = BASE_URL + get_apks_path
-apks = requests.get(get_apks_url, headers=headers)
+if __name__ == '__main__':
+    
+    
+    parser = argparse.ArgumentParser(description='Deploy app to Amazon Appstore')
+    parser.add_argument('--run', required=False, action='store_true', help='Run the script')
+    parser.add_argument('--client_id', required=True, help='client_id - you get this from amazon portal, apps&services ribbon, API access, Security profiles, Web Settings, looks like amzn1.application-oa2-client.XXX...')
+    parser.add_argument('--client_secret', required=True, help='client_secret - you get this from amazon portal, apps&services ribbon, API access, Security profiles, Web Settings, this is a 64 char string')
+    parser.add_argument('--app_id', required=True, help='app_id - you get this from amazon portal, apps&services ribbon, My app, App, App Submission API Keys, amzn1.devportal.mobileapp.XXX...')
+    parser.add_argument('--local_apk_path', required=True, help='apk path on local computer. Example: d:/myapp.apk')
+    parser.add_argument('--recent_changes', required=False, help='recent_changes. Example: "fixed bug xyz"')
+    parser.add_argument('--verbose', required=False, action='store_true', help='verbose output')
+    args = parser.parse_args()
 
-firstAPK = apks.json()[0]
-apk_id = firstAPK['id']
-replace_apk_path = '/v1/applications/%s/edits/%s/apks/%s/replace' % (app_id, edit_id, apk_id)
+    if args.verbose:
+        log.basicConfig(level=log.INFO)        
+    else:
+        log.basicConfig(level=log.WARNING)
 
-apkquery = get_edits_url + "/%s" % edit_id + "/apks/%s" % apk_id
-apkquery_response = requests.get(apkquery, headers=headers)
-apk_etag = apkquery_response.headers.get('ETag')
+    if args.run:
+        log.info("Running script")
+    else:
+        log.info("use --run to run script, displaying current arguments")
+        print(vars(args))
+        sys.exit(0)
 
 
-## Open the apk file on your local machine
-try:
-    log.info("Reading local apk file")
-    local_apk = open(local_apk_path, 'rb').read()
-except:
-    log.error("Error opening local apk file")
-    sys.exit(1)
+    log.info("parsing arguments and assigning variables")
+    
+    client_id = args.client_id
+    client_secret = args.client_secret
+    app_id = args.app_id
+    local_apk_path = args.local_apk_path
+    recent_changes = args.recent_changes
+    BASE_URL = 'https://developer.amazon.com/api/appstore'
 
-replace_apk_url = BASE_URL + replace_apk_path
-all_headers = {
-    'Content-Type': 'application/vnd.android.package-archive',
-    'If-Match': apk_etag
-}
-all_headers.update(headers)
-replace_apk_response = requests.put(replace_apk_url, headers=all_headers, data=local_apk)
 
-log.info(replace_apk_response.json())
-#@@@@@@@@@@@@@ update listing
 
-# getlisting
-get_listing_path = '/v1/applications/%s/edits/%s/listings' % (app_id, edit_id)
-get_listing_url = BASE_URL + get_listing_path + "/en-US"
-get_listing_response = requests.get(get_listing_url, headers=headers)
-listing_etag = get_listing_response.headers.get('ETag')
-log.info(get_listing_response.json())
-log.info(etag)
-listing = get_listing_response.json()
-# setlisting
-listing['recentChanges'] = arg_recent_changes
-set_listing_path = '/v1/applications/%s/edits/%s/listings' % (app_id, edit_id)
-set_listing_url = BASE_URL + set_listing_path + "/en-US"
-all_headers = {
-    'If-Match': listing_etag
-}
-all_headers.update(headers)
-set_listing_response = requests.put(set_listing_url, headers=all_headers, json=listing)
-log.info(set_listing_response.json())
+    headers = authenticate(client_id, client_secret)
+    local_versionCode = getLocalVersion()      
+    online_current_versionCode = getAPKversion()
 
-#@@@@@@@@@@@@@ commit
-# query the current edit and etags before commit
+    if local_versionCode == online_current_versionCode:
+        print("No update required, versions are the same")
+        sys.exit(0)
 
-log.info("getting open edit")
-get_edits_path = '/v1/applications/%s/edits' % app_id
-get_edits_url = BASE_URL + get_edits_path
-get_edits_response = requests.get(get_edits_url, headers=headers)
-current_edit = get_edits_response.json()
-edit_id = current_edit['id']
-etag = get_edits_response.headers.get('ETag')
-log.info("edit_id: %s" % edit_id)
-log.info("etag: %s" % etag)
-
-query = get_edits_url + "/%s" % edit_id + "/commit" 
-all_headers = {"if-match": etag}
-all_headers.update(headers)
-query_response = requests.post(query, headers=all_headers)
-log.info(query_response.json())
+    # continue the application
+    APKreplace(app_id, local_apk_path)
+    setListingRecentChanges(recent_changes)
+    submitCommit()
 

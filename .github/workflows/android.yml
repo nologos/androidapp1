@@ -56,10 +56,4 @@ jobs:
          echo ${{ env.CURRENT_COMMIT_APP_VERSION_NAME }}
 
       - name: Deploy to Amazon appstore
-        run: |
-          if [ $APP_VERSION_NAME == $CURRENT_COMMIT_APP_VERSION_NAME ]; then
-            echo "Deploying to Amazon appstore"
-            python $GITHUB_WORKSPACE/amazonbuild/amazonCD.py --client_id ${{ secrets.AMZN_CLIENT_ID }} --client_secret ${{ secrets.AMZN_CLIENT_SECRET }} --app_id ${{ secrets.AMZN_APP_ID }} --local_apk_path app-release.apk --recent_changes "${{ env.COMMIT_MSG_RECENT_CHANGES}}" --verbose --run
-          else
-            echo "Not deploying to Amazon appstore"
-          fi
+        run: python $GITHUB_WORKSPACE/amazonbuild/amazonCD.py --client_id ${{ secrets.AMZN_CLIENT_ID }} --client_secret ${{ secrets.AMZN_CLIENT_SECRET }} --app_id ${{ secrets.AMZN_APP_ID }} --local_apk_path app-release.apk --recent_changes "${{ env.COMMIT_MSG_RECENT_CHANGES}}" --verbose --run
