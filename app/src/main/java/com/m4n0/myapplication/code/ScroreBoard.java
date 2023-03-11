@@ -15,11 +15,16 @@ public class ScroreBoard {
 
     // increase scrore by var amount
     private void increaseScore(int amount) {
-        System.out.println("you have gained " + amount + " for this answer");
+        System.out.println("SCORE: "+ score +" + " + amount);
         score += amount;
         streak++;
         changecounter++;
     }
+
+    public int getChangecounter() {
+        return changecounter;
+    }
+
     public void endStreak(){
         streak = 1;
         changecounter++;

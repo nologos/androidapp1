@@ -10,18 +10,36 @@ public class Main {
     public static void main(String[] args) {
 
         System.out.println("App is running");
-
+        
 
         Scanner scanner = new Scanner(System.in);
         ScroreBoard scoreboard = new ScroreBoard();
         List<Dataholder> holderOne = new ArrayList<>();
-
+        MultProvider multProvider = new MultProvider();
 
         while (1 == 1) {
-            scoreboard.printScore();
-            MultProvider multProvider = new MultProvider();
+            // scoreboard.printScore();
+            multProvider.MultProvider(holderOne);
+            
+            //check if prievious 5 on the list was incorrect
 
-            System.out.println("Enter result for the equation or type 00 to exit");
+            int changeCounterMax = 0;
+            if (!holderOne.isEmpty()) {
+                changeCounterMax = holderOne.get(holderOne.size()-1).getChangeCounter();
+            }
+
+            int changeCounter = changeCounterMax - 5;
+            if (changeCounter > 0) {
+                if (holderOne.get(changeCounter).getReworkFlag()){
+                    System.out.println("rework trigered");
+                    holderOne.get(changeCounter).setReworkFlag(false);
+                    MyTuple<Integer, Integer> reworkTuple = new MyTuple<>(holderOne.get(changeCounter).getA(), holderOne.get(changeCounter).getB());
+                    multProvider.reworkprovider(reworkTuple);
+                }
+            }
+
+
+            // System.out.println("Enter result for the equation or type 00 to exit");
             System.out.println(multProvider.showequasion());
             // time the amount of time required to answer
             long startTime = System.currentTimeMillis();
@@ -44,7 +62,10 @@ public class Main {
 
             long endTime = System.currentTimeMillis();
             long timeElapsed = endTime - startTime;
-            Dataholder currentMult = new Dataholder(multProvider.getA(), multProvider.getB(), input == multProvider.getResult(), timeElapsed < 5000);
+            Dataholder currentMult = new Dataholder(scoreboard.getChangecounter(), multProvider.getA(), multProvider.getB(), input == multProvider.getResult(), timeElapsed < 5000);
+            if (input == multProvider.getResult() || timeElapsed < 5000 ){
+                currentMult.setReworkFlag(false);
+            }
             holderOne.add(currentMult);
 
 

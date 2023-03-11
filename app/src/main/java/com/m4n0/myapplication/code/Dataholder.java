@@ -1,18 +1,22 @@
 package com.m4n0.myapplication.a2023app.code;
 
 public class Dataholder {
+    private int changeCounter;
     private int a;
     private int b;
     private boolean correct;
     private boolean time;
+    private boolean reworkFlag;
 
 //    number1, number2, true if correct, true if in time
 
-    public Dataholder(int a, int b, boolean correct, boolean time) {
+    public Dataholder(int changeCounter, int a, int b, boolean correct, boolean time) {
+        this.changeCounter = changeCounter;
         this.a = a;
         this.b = b;
         this.correct = correct;
         this.time = time;
+        this.reworkFlag = reworkFlag;
     }
 
     public int getA() {
@@ -39,6 +43,9 @@ public class Dataholder {
         this.b = b;
     }
 
+
+
+
     public void setCorrect(boolean correct) {
         this.correct = correct;
     }
@@ -47,8 +54,20 @@ public class Dataholder {
         this.time = time;
     }
 
-    // print out the list
+
     public void printItem() {
-        System.out.println(a + "," + b + "," + correct + "," + time);
+        System.out.println(a + "," + b + "," + correct + "," + time + "," + reworkFlag);
+    }
+
+    public int getChangeCounter() {
+        return changeCounter;
+    }
+
+    public boolean getReworkFlag() {
+        return reworkFlag;
+    }
+
+    public void setReworkFlag(boolean reworkFlag) {
+        this.reworkFlag = reworkFlag;
     }
 }
