@@ -7,9 +7,12 @@ import android.os.Bundle;
 
 import android.view.Gravity;
 import android.view.View;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import android.widget.Button;
@@ -22,6 +25,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView problemText;
     private TextView answerWindow;
     private int goodAnswer;
+
+
+    private GridView mGridView;             // textlist
+    private List<String> mWords;            // textlist
 
     // my functions
     private int presentequasion() {
@@ -50,6 +57,24 @@ public class MainActivity extends AppCompatActivity {
         problemText = findViewById(R.id.problemwindow);
         answerWindow = findViewById(R.id.answerwindow);
         goodAnswer = presentequasion();
+
+//        adding textview list
+            mGridView = findViewById(R.id.gridView);
+            mWords = new ArrayList<>();
+
+            // Add some sample words to the list
+            mWords.add("apple");
+            mWords.add("banana");
+            mWords.add("cherry");
+            mWords.add("date");
+            mWords.add("elderberry");
+
+            // Create an adapter for the grid view and set it
+            WordAdapter adapter = new WordAdapter(this, mWords);
+            mGridView.setAdapter(adapter);
+
+//        adding textview list close
+
 
         GridLayout numberPad = findViewById(R.id.number_pad);
         int childCount = numberPad.getChildCount();

@@ -10,17 +10,72 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
+<!--tophalf-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/numpad"
         android:orientation="vertical">
+<!--above main-->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:orientation="vertical">
 
+<!--    score-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/score"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/view_border2"
+            android:gravity="center"
+            android:hint="score"
+            android:padding="5dp"
+            android:textSize="30dp"></TextView>
+    </LinearLayout>
+
+<!--history-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <GridView
+            android:id="@+id/gridView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="4"
+            android:verticalSpacing="16dp"
+            android:horizontalSpacing="16dp"
+            android:padding="16dp" />
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>
+
+
+
+
+<!--below main-->
+<!--        solve window-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1.2">
 
             <TextView
                 android:id="@+id/problemwindow"
@@ -31,9 +86,11 @@
                 android:gravity="center"
                 android:hint="Solve"
                 android:padding="5dp"
-                android:textSize="90dp"></TextView>
+                android:textSize="60sp"
+></TextView>
         </LinearLayout>
 
+<!--        answer window -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -46,14 +103,14 @@
                 android:layout_margin="20dp"
                 android:background="@drawable/view_border2"
                 android:gravity="center"
-                android:hint="Answer Area1"
+                android:hint="Answer Area"
                 android:padding="5dp"
                 android:textSize="50dp"></TextView>
         </LinearLayout>
 
     </LinearLayout>
 
-
+<!--numpad-->
     <LinearLayout
         android:id="@+id/numpad"
         android:layout_width="match_parent"
@@ -61,7 +118,6 @@
         android:layout_alignParentBottom="true">
 
         <GridLayout
-            android:soundEffectsEnabled="true"
             android:id="@+id/number_pad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,6 +126,7 @@
             android:columnCount="3"
             android:columnOrderPreserved="false"
             android:rowCount="4"
+            android:soundEffectsEnabled="true"
             android:useDefaultMargins="true">
 
             <Button
@@ -135,12 +192,12 @@
         </GridLayout>
 
         <LinearLayout
-            android:soundEffectsEnabled="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="5dp"
             android:orientation="vertical"
-            android:paddingTop="5dp">
+            android:paddingTop="5dp"
+            android:soundEffectsEnabled="true">
 
             <Button
                 android:id="@+id/btnBack"
