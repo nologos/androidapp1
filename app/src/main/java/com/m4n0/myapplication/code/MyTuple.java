@@ -1,4 +1,4 @@
-package com.m4n0.myapplication.a2023app.code;
+package com.m4n0.myapplication.code;
 
 public class MyTuple<A, B> {
     private final A a;

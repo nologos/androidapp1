@@ -1,4 +1,5 @@
-package com.m4n0.myapplication.a2023app.code;
+package com.m4n0.myapplication.code;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
