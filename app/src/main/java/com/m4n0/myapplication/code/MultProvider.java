@@ -11,9 +11,10 @@ public class MultProvider {
     private int a;
     private int b;
     private int result;
+    private boolean firstTimeAnswer;
 
     public MultProvider() {
-
+        this.firstTimeAnswer = true;
     }
 
     public void reworkprovider(MyTuple<Integer, Integer> tuple){
@@ -84,5 +85,11 @@ public class MultProvider {
         return new MyTuple<>(recent,recent2);
     };
 
+    public void setFirstTimeAnswer(boolean firstTimeAnswer) {
+        this.firstTimeAnswer = firstTimeAnswer;
+    }
 
+    public boolean getFirstTimeAnswer() {
+        return this.firstTimeAnswer;
+    }
 }

@@ -54,9 +54,15 @@ public class Dataholder {
         this.time = time;
     }
 
-
-    public void printItem() {
-        System.out.println(a + "," + b + "," + correct + "," + time + "," + reworkFlag);
+    public String printItem() {
+        return "Dataholder{" +
+                "changeCounter=" + changeCounter +
+                ", a=" + a +
+                ", b=" + b +
+                ", correct=" + correct +
+                ", time=" + time +
+                ", reworkFlag=" + reworkFlag +
+                '}';
     }
 
     public int getChangeCounter() {

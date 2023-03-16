@@ -1,5 +1,9 @@
 package com.m4n0.myapplication.code;
 
+import java.lang.Integer;
+import java.lang.String;
+
+
 public class ScroreBoard {
 
     private int score;
@@ -7,6 +11,11 @@ public class ScroreBoard {
     private int changecounter;
     private int count;
 
+
+
+    public String getScore() {
+        return String.valueOf(score);
+    }
 
     // print current score
     public void printScore() {
