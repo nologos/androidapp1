@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -43,11 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private List<String> data;            // textlist
 
     // my functions
-    private int presentequasion_old() {
-        // random number between 2 and 9
-        Random rand = new Random();
-        int num1 = rand.nextInt(10) + 2;
-        int num2 = rand.nextInt(8) + 2;
 
     private int presentEquasion(){
         multProvider.MultProvider(holderOne);
