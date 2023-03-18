@@ -31,12 +31,16 @@ public class MainActivity extends AppCompatActivity {
     public TimeTracker timerOne = new TimeTracker();
 
     List<Dataholder> holderOne = new ArrayList<>();
+
+
+
+
     public MultProvider multProvider = new MultProvider();
 
 
 
     private GridView mGridView;             // textlist
-    private List<String> mWords;            // textlist
+    private List<String> data;            // textlist
 
     // my functions
     private int presentequasion_old() {
@@ -101,19 +105,10 @@ public class MainActivity extends AppCompatActivity {
 // adding holder one to history
 
 //        adding textview list
-            mGridView = findViewById(R.id.gridView);
-            mWords = new ArrayList<>();
-
-            // Add some sample words to the list
-            mWords.add("apple");
-            mWords.add("banana");
-            mWords.add("cherry");
-            mWords.add("date");
-            mWords.add("elderberry");
-
-            // Create an adapter for the grid view and set it
-            WordAdapter adapter = new WordAdapter(this, mWords);
-            mGridView.setAdapter(adapter);
+        mGridView = findViewById(R.id.gridView);
+        CustomAdapter adapter = new CustomAdapter(this, holderOne);
+//        mGridView.setNumColumns(8);
+        mGridView.setAdapter(adapter);
 
 //        adding textview list close
 
@@ -182,6 +177,9 @@ public class MainActivity extends AppCompatActivity {
                         toast.show();
                         goodAnswer = presentequasion();
                         answerWindow.setText("");
+
+                        mGridView.setAdapter(adapter);
+
                     } else {
                         multProvider.setFirstTimeAnswer(false);
                         scoreboard.endStreak();

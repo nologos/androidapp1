@@ -54,6 +54,10 @@ public class Dataholder {
         this.time = time;
     }
 
+    public String printHistory(){
+        return a + "x" + b;
+    }
+
     public String printItem() {
         return "Dataholder{" +
                 "changeCounter=" + changeCounter +
@@ -76,4 +80,6 @@ public class Dataholder {
     public void setReworkFlag(boolean reworkFlag) {
         this.reworkFlag = reworkFlag;
     }
+
+    
 }
