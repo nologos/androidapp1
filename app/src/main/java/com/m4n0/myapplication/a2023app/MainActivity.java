@@ -49,16 +49,7 @@ public class MainActivity extends AppCompatActivity {
         int num1 = rand.nextInt(10) + 2;
         int num2 = rand.nextInt(8) + 2;
 
-        // convert to string {1st number} x {2nd number} =
-
-        String problem = num1 + " x " + num2 + " = ";
-        problemText.setText(problem);
-        // returns num1 * num2
-        int answer = num1 * num2;
-        return answer;
-    }
-
-    private int presentequasion(){
+    private int presentEquasion(){
         multProvider.MultProvider(holderOne);
         int changeCounterMax = 0;
         if (!holderOne.isEmpty()) {
@@ -67,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         int changeCounter = changeCounterMax - 5;
         if (changeCounter > 0) {
-            if (holderOne.get(changeCounter).getReworkFlag()){
+            if (holderOne.size() > changeCounter && holderOne.get(changeCounter).getReworkFlag()){
                 System.out.println("rework trigered");
                 holderOne.get(changeCounter).setReworkFlag(false);
                 MyTuple<Integer, Integer> reworkTuple = new MyTuple<>(holderOne.get(changeCounter).getA(), holderOne.get(changeCounter).getB());
@@ -99,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 // below is main
         problemText = findViewById(R.id.problemwindow);
         answerWindow = findViewById(R.id.answerwindow);
-        goodAnswer = presentequasion();
+        goodAnswer = presentEquasion();
         ScroreBoard scoreboard = new ScroreBoard();
         scoreboardwindow = findViewById(R.id.scoreWindow);
 // adding holder one to history
@@ -175,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast toast = Toast.makeText(MainActivity.this, "Correct!", Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.TOP, 0, 100);
                         toast.show();
-                        goodAnswer = presentequasion();
+                        goodAnswer = presentEquasion();
                         answerWindow.setText("");
 
                         mGridView.setAdapter(adapter);
