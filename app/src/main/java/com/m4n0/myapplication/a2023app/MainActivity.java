@@ -1,5 +1,6 @@
 package com.m4n0.myapplication.a2023app;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.m4n0.myapplication.code.*;
 
@@ -137,7 +138,18 @@ public int diff = 0;
         Button btnBack = findViewById(R.id.btnBack);
         Button btnEnter = findViewById(R.id.btnEnter);
 
+
         MaterialButtonToggleGroup toggleGroup = findViewById(R.id.toggleButton);
+        MaterialButton refreshButton = findViewById(R.id.refreshButton);
+
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scoreboard.clearScore();
+                scoreboardwindow.setText("");
+                goodAnswer = presentEquasion(diff);
+            }
+        });
         toggleGroup.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
             @Override
             public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
@@ -186,7 +198,7 @@ public int diff = 0;
                         holderOne.add(currentMult);
                         multProvider.setFirstTimeAnswer(true);  // reseting first time answer
                         timerOne.startTimer();
-                        scoreboard.increaseScoreBasedOnStreak();
+                        scoreboard.increaseScoreBasedOnStreak(diff);
                         scoreboardwindow.setText(scoreboard.getScore());
                         Toast toast = Toast.makeText(MainActivity.this, "Correct!", Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.TOP, 0, 100);

@@ -56,7 +56,7 @@ public class Main {
 
             if (input == multProvider.getResult()) {
                 System.out.println("Correct");
-                scoreboard.increaseScoreBasedOnStreak();
+                scoreboard.increaseScoreBasedOnStreak(diff);
             } else {
                 System.out.println("Wrong");
                 scoreboard.endStreak();
