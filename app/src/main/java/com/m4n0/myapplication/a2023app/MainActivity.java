@@ -1,5 +1,6 @@
 package com.m4n0.myapplication.a2023app;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.m4n0.myapplication.code.*;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 
 import android.view.Gravity;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ import java.util.List;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,22 +44,31 @@ public class MainActivity extends AppCompatActivity {
     private GridView mGridView;             // textlist
     private List<String> data;            // textlist
 
-    // my functions
 
-    private int presentEquasion(){
-        multProvider.MultProvider(holderOne);
+public int diff = 0;
+    // my functions
+    
+
+
+
+    private int presentEquasion(int diff){
+        multProvider.MultProvider(holderOne,diff);
         int changeCounterMax = 0;
         if (!holderOne.isEmpty()) {
             changeCounterMax = holderOne.get(holderOne.size()-1).getChangeCounter();
         }
 
         int changeCounter = changeCounterMax - 5;
-        if (changeCounter > 0) {
-            if (holderOne.size() > changeCounter && holderOne.get(changeCounter).getReworkFlag()){
-                System.out.println("rework trigered");
-                holderOne.get(changeCounter).setReworkFlag(false);
-                MyTuple<Integer, Integer> reworkTuple = new MyTuple<>(holderOne.get(changeCounter).getA(), holderOne.get(changeCounter).getB());
-                multProvider.reworkprovider(reworkTuple);
+
+        if (diff == 0){
+            // training assistance algorith to apply on easy only
+            if (changeCounter > 0) {
+                if (holderOne.size() > changeCounter && holderOne.get(changeCounter).getReworkFlag()) {
+                    System.out.println("rework trigered");
+                    holderOne.get(changeCounter).setReworkFlag(false);
+                    MyTuple<Integer, Integer> reworkTuple = new MyTuple<>(holderOne.get(changeCounter).getA(), holderOne.get(changeCounter).getB());
+                    multProvider.reworkprovider(reworkTuple);
+                }
             }
         }
 
@@ -84,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 // below is main
         problemText = findViewById(R.id.problemwindow);
         answerWindow = findViewById(R.id.answerwindow);
-        goodAnswer = presentEquasion();
+        goodAnswer = presentEquasion(diff);
         ScroreBoard scoreboard = new ScroreBoard();
         scoreboardwindow = findViewById(R.id.scoreWindow);
 // adding holder one to history
@@ -125,6 +137,25 @@ public class MainActivity extends AppCompatActivity {
         Button btnBack = findViewById(R.id.btnBack);
         Button btnEnter = findViewById(R.id.btnEnter);
 
+        MaterialButtonToggleGroup toggleGroup = findViewById(R.id.toggleButton);
+        toggleGroup.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
+            @Override
+            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+                if (isChecked) {
+                    
+                    switch (checkedId) {
+                        case R.id.button1:
+                            diff = 0;
+                            break;
+                        case R.id.button2:
+                            diff = 1;
+                            break;
+                        case R.id.button3:
+                            diff = 2;
+                    }
+                }
+            }
+        });;
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast toast = Toast.makeText(MainActivity.this, "Correct!", Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.TOP, 0, 100);
                         toast.show();
-                        goodAnswer = presentEquasion();
+                        goodAnswer = presentEquasion(diff); // present equasion local method to display a new mult
                         answerWindow.setText("");
 
                         mGridView.setAdapter(adapter);

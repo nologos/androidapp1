@@ -24,7 +24,7 @@ public class MultProvider {
     }
 
 
-    public void MultProvider(List<Dataholder> holderOne) {
+    public void MultProvider(List<Dataholder> holderOne, int diff) {
         // Initialize variables
         MyTuple<Integer, Integer> tuple = CheckForRecentRepeats(holderOne);
         int acompare = tuple.getA();
@@ -32,10 +32,27 @@ public class MultProvider {
         int num1, num2;
 
 
+
         while (true) {
-            // Generate two random numbers
-            num1 = (int) (Math.random() * 10) + 2;
-            num2 = (int) (Math.random() * 10) + 2;
+
+            num1 = 0;
+            num2 = 0;
+
+            if (diff == 0) {
+                num1 = (int) (Math.random() * 10) + 2;
+                num2 = (int) (Math.random() * 10) + 2;
+            }
+
+            if (diff == 1) {
+                num1 = (int) (Math.random() * 10) + 2;
+                num2 = (int) (Math.random() * 90) + 11;
+            }
+
+            if (diff == 2) {
+                num1 = (int) (Math.random() * 90) + 11;
+                num2 = (int) (Math.random() * 90) + 11;
+            }
+
 
             // Sort the numbers so that a is always the smaller number
             if (num1 > num2) {

@@ -20,7 +20,8 @@ public class Main {
 
         while (1 == 1) {
             // scoreboard.printScore();
-            multProvider.MultProvider(holderOne);
+            int diff = 0;
+            multProvider.MultProvider(holderOne, diff);
             
             //check if prievious 5 on the list was incorrect
 
