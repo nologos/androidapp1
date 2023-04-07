@@ -45,14 +45,17 @@ public class ScroreBoard {
     
     // increase score based on streak every 5th answer gives x3 poitnts, every x10 gives x5 points, every 25 gives x10 points, every 100 gives x25 points
     // base score is 1 point untill 10, then 2 untill 25, then 3 untill 100
+
     public void increaseScoreBasedOnStreak(int diff) {
-        int mult =1 
+        int mult =1;
         if (diff ==1 ){
-            int mult= 4;
+            mult= 4;
         }
         if (diff ==2 ){
-            int mult =10;
+            mult =10;
         }
+
+        System.out.println(diff+" "+mult);
         if (changecounter < 10) {
             count = 10;
         } else if (changecounter < 25) {
