@@ -46,6 +46,7 @@ public class ScroreBoard {
     // increase score based on streak every 5th answer gives x3 poitnts, every x10 gives x5 points, every 25 gives x10 points, every 100 gives x25 points
     // base score is 1 point untill 10, then 2 untill 25, then 3 untill 100
     public void increaseScoreBasedOnStreak(int diff) {
+        int mult =1 
         if (diff ==1 ){
             int mult= 4;
         }
